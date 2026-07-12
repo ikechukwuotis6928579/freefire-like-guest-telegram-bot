@@ -58,6 +58,16 @@ async def like_with_guest(guest: dict, target_uid: str, BASE_URL: str, semaphore
     guest_uid = str(guest["uid"])
     guest_pass = guest["password"]
     now_ms = int(time.time() * 1000)
+    # Region-account fallback: if `guest` carries a region key and no uid/password,
+    # use the hardcoded region account from count_likes.ACCOUNTS (still-valid JWTs).
+    if (not guest_uid or guest_uid == "0") and guest.get("region"):
+        from count_likes import ACCOUNTS
+        acc = ACCOUNTS.get(guest["region"])
+        if acc:
+            import re as _re
+            m = dict(_re.findall(r'(\w+)=([^&]+)', acc))
+            guest_uid = m.get("uid", guest_uid)
+            guest_pass = m.get("password", guest_pass)
 
     if guest_used_for_target(target_uid, guest_uid):
         print(f"[{guest_uid}] Permanently used for target {target_uid}, skipping...")

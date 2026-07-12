@@ -166,12 +166,24 @@ async def like_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
         # Reuse the original engine's worker + helpers directly.
         BASE_URL = engine.get_base_url(region)
         engine.ensure_target(uid)
-        with open(engine.guests_file, "r") as f:
-            guests = __import__("json").load(f)
 
-        available = [g for g in guests if not engine.guest_used_for_target(uid, str(g["uid"]))]
+        # Load bundled guests; if none usable, fall back to the toolkit's
+        # hardcoded (still-valid) region account so likes can still be sent.
+        guests = []
+        try:
+            with open(engine.guests_file, "r") as f:
+                guests = __import__("json").load(f)
+        except Exception:
+            guests = []
+
+        available = [g for g in guests if not engine.guest_used_for_target(uid, str(g.get("uid", "0")))]
         if not available:
-            return await update.message.reply_text("⚠️ No unused guest accounts left for this target.")
+            # Fallback: use the hardcoded region account from count_likes.
+            available = [{"region": region, "uid": "0", "password": "0"}]
+            await update.message.reply_text(
+                "⚠️ Bundled guest accounts are dead — using the built-in region account instead.",
+                parse_mode="Markdown",
+            )
 
         planned = min(max(0, count_req), len(available))
         sem = asyncio.Semaphore(max(1, concurrency))

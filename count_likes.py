@@ -81,6 +81,8 @@ async def getAccess_Token(account):
 
 
 async def create_jwt(region: str) -> Tuple[str, str, str]:
+    if region == "MENA":
+        region = "ME"  # MENA shares the ME account/server
     account = ACCOUNTS.get(region)
     access_token, open_id = await getAccess_Token(account)
     json_data = json.dumps({
