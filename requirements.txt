@@ -1,0 +1,4 @@
+httpx
+protobuf
+pycryptodome
+python-telegram-bot
