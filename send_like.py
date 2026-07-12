@@ -48,6 +48,8 @@ def get_base_url(server_name: str) -> str:
         return "https://client.ind.freefiremobile.com"
     elif server_name in {"BR", "US", "SAC", "NA"}:
         return "https://client.us.freefiremobile.com"
+    elif server_name in {"ME", "MENA"}:
+        return "https://clientbp.ggblueshark.com"
     else:
         return "https://clientbp.ggblueshark.com"
 
