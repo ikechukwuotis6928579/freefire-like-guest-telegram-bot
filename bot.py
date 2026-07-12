@@ -59,7 +59,7 @@ HELP = (
     "/guests - how many guest accounts are loaded\n"
     "/regions - list supported regions\n\n"
     "Supported regions: " + ", ".join(SUPPORTED_REGIONS) + "\n\n"
-    "Note: likes use the guest accounts bundled in guests_manager/. "
+    "Note: likes use the guest accounts bundled in guests\\_manager/. "
     "One like per guest per target (24h)."
 )
 
